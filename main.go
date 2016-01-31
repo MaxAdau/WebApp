@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"html/template"
 	"regexp"
+	"gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
 	// "errors"
 	"github.com/MaxAdau/lib"
 )
@@ -14,6 +16,11 @@ import (
 type Page struct {
 	Title string
 	Body []byte
+}
+
+type Person struct {
+	Name string
+	Phone string
 }
 
 // Save a Page into a file
@@ -147,5 +154,31 @@ func main() {
 
 	// http.ListenAndServe(":8080", nil)
 	lib.PrintHello()
+
+	session, err := mgo.Dial("127.0.0.1")
+	if err != nil {
+		panic(err)
+	}
+	defer session.Close()
+	// This will be my access to the collection "people"
+	c := session.DB("test").C("people")
+
+	// Insert two struct Person, like define earlier
+	err = c.Insert(&Person{"Ale", "+55 53 8116 9639"},
+	               &Person{"Cla", "+55 53 8402 8510"})
+
+	if err != nil {
+		panic(err)
+	}
+
+	result := Person{}
+	err = c.Find(bson.M{"name" : "Ale"}).One(&result)
+
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("Phone:", result.Phone)
+
 
 }
