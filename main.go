@@ -1,9 +1,9 @@
 package main
 
 import (
-	"fmt"
+	_ "fmt"
 	"net/http"
-	"gopkg.in/mgo.v2/bson"
+	_	"gopkg.in/mgo.v2/bson"
 )
 
 var db = Db{ip : "127.0.0.1"}
@@ -12,19 +12,17 @@ var db = Db{ip : "127.0.0.1"}
 func main (){
 
 	db.Connect("127.0.0.1")
-	SetHandlers()
-	
-	http.ListenAndServe(":8080", nil)
+	mux := http.NewServeMux()
 
 
 
+	h := &Handler {}
+
+	// trouver un moyen pour envoyer tout ce qui vient de /Person*
+	mux.HandleFunc("/Person", h.PersonHandler)
+
+	http.ListenAndServe(":8080", mux)
 
 
-
-	coll := GetCollection("test", "people")
-
-	result := Person{}
-	coll.Find(bson.M{"name" : "Ale"}).One(&result)
-
-	fmt.Println(result)
+	// fmt.Println(result)
 }
