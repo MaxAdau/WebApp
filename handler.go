@@ -8,7 +8,7 @@ import (
 
 type Handler struct {
 	p Person
-	// c *Car
+	c Car
 }
 
 func (h *Handler) WebAPI(w http.ResponseWriter, r *http.Request) {
@@ -23,7 +23,7 @@ func (h *Handler) WebAPI(w http.ResponseWriter, r *http.Request) {
 	switch url := r.URL.Path[len(category):] ; category {
 		case "" : fmt.Fprintf(w, "Category is not correct\n")
 		case "/Person/" : fmt.Fprintf(w, h.p.Handler(url))
-		// case "/Person/" : fmt.Printf(h.Handler(url))
+		case "/Car/" : fmt.Fprintf(w, h.c.Handler(url))
 
 	}
 
