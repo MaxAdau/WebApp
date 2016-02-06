@@ -19,7 +19,7 @@ func main (){
 	h := &Handler {}
 
 	// trouver un moyen pour envoyer tout ce qui vient de /Person*
-	mux.HandleFunc("/Person", h.PersonHandler)
+	mux.HandleFunc("/", h.WebAPI)
 
 	http.ListenAndServe(":8080", mux)
 
