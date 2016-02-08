@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"regexp"
-	_ "gopkg.in/mgo.v2/bson"
+	"gopkg.in/mgo.v2/bson"
 	"net/url"
 
 )
@@ -14,6 +14,8 @@ type Person struct {
 	Age int
 	
 }
+
+type Persons []Person 
 
 func (p Person) Handler(url *url.URL) string {
 	// Todo : rajouter les arguments en fin de regexp
@@ -33,17 +35,32 @@ func (p Person) Handler(url *url.URL) string {
 }
 
 func (p Person) Search(str string) string {
+	// ParseQuery
+	_, err := url.ParseQuery(str)
+	if err !=  nil {
+		return fmt.Sprintf("Error while Parsing query %s\n", str)
+	}
+
+	// Check word validity --
+	//
+	//
+
+	// Create db Session and collection
+	session := db.Session.Copy()
+	c := session.DB("WebApp").C("person")
+	// Find in collection
+
+	var persons Persons
+	err = c.Find(bson.M{"name": "Santa"}).All(&persons)
+
+	fmt.Printf("Query = %+v", persons)
+	// Format answer. Can have more than one !
 	return fmt.Sprintf("Searching : %s", str)
 }
 
 func (p Person) Create(str string) string {
-	session := db.Session.Copy()
-	c := session.DB("toilet").C("restaurants")
-	p = Person{}
-	c.Find("").One(&p)
-	// err := c.Find({"cuisine" : "Italian"})
-	return "lol\n"
-	// return fmt.Sprintf("Creating : %s", string(p))
+
+	return fmt.Sprintf("Creating : %s", str)
 }
 
 func (p Person) Read(str string) string {
@@ -56,5 +73,3 @@ func (p Person) Delete(str string) string {
 	return fmt.Sprintf("Deleting : %s", str)
 }
 
-
-type Persons []Person 
