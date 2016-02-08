@@ -12,6 +12,8 @@ var db = Db{ip : "127.0.0.1"}
 func main (){
 
 	db.Connect("127.0.0.1")
+	defer db.Session.Close()
+
 	mux := http.NewServeMux()
 
 
@@ -20,7 +22,6 @@ func main (){
 
 	// trouver un moyen pour envoyer tout ce qui vient de /Person*
 	mux.HandleFunc("/", h.WebAPI)
-
 	http.ListenAndServe(":8080", mux)
 
 

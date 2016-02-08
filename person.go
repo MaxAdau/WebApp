@@ -3,6 +3,9 @@ package main
 import (
 	"fmt"
 	"regexp"
+	_ "gopkg.in/mgo.v2/bson"
+	"net/url"
+
 )
 
 type Person struct {
@@ -12,21 +15,21 @@ type Person struct {
 	
 }
 
-func (p Person) Handler(str string) string {
+func (p Person) Handler(url *url.URL) string {
 	// Todo : rajouter les arguments en fin de regexp
-	rule := regexp.MustCompile("^(Search|Create|Read|Update|Delete)/")
-	verb := rule.FindString(str)
+	rule := regexp.MustCompile("/(search|create|read|update|delete)")
+	verb := rule.FindString(url.Path)
 
 	// Switch on verb. Sending  str without the verb part
-	switch str = str[len(verb):] ; verb {
+	switch  verb {
 		case "" : return fmt.Sprintf("APIObj [Person] has no such verb\n")
-		case "Search/" 	: return p.Search(str)
-		case "Create/" 	: return p.Create(str)
-		case "Read/" 	: return p.Read(str)
-		case "Update/" 	: return p.Update(str)
-		case "Delete/" 	: return p.Delete(str)
+		case "/search" 	: return p.Search(url.RawQuery)
+		case "/create" 	: return p.Create(url.RawQuery)
+		case "/read" 	: return p.Read(url.RawQuery)
+		case "/update" 	: return p.Update(url.RawQuery)
+		case "/delete" 	: return p.Delete(url.RawQuery)
 	}
-	return str
+	return url.RawQuery
 }
 
 func (p Person) Search(str string) string {
@@ -34,7 +37,13 @@ func (p Person) Search(str string) string {
 }
 
 func (p Person) Create(str string) string {
-	return fmt.Sprintf("Creating : %s", str)
+	session := db.Session.Copy()
+	c := session.DB("toilet").C("restaurants")
+	p = Person{}
+	c.Find("").One(&p)
+	// err := c.Find({"cuisine" : "Italian"})
+	return "lol\n"
+	// return fmt.Sprintf("Creating : %s", string(p))
 }
 
 func (p Person) Read(str string) string {
