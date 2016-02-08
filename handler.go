@@ -7,8 +7,8 @@ import (
 )
 
 type Handler struct {
-	p APIObj
-	c APIObj
+	person APIObj
+	car APIObj
 }
 
 func (h *Handler) WebAPI(w http.ResponseWriter, r *http.Request) {
@@ -22,7 +22,7 @@ func (h *Handler) WebAPI(w http.ResponseWriter, r *http.Request) {
 	// Sending URL without category
 	switch category {
 		case "" : fmt.Fprintf(w, "Category is not correct\n")
-		case "/Person/" : fmt.Fprintf(w, h.p.Handler(r.URL))
+		case "/Person/" : fmt.Fprintf(w, h.person.Handler(r.URL))
 		// case "/Car/" : fmt.Fprintf(w, h.c.Handler(url))
 
 	}
