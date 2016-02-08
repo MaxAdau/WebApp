@@ -18,7 +18,7 @@ func main (){
 
 
 
-	h := &Handler {}
+	h := &Handler {Person{}, Person{}}
 
 	// trouver un moyen pour envoyer tout ce qui vient de /Person*
 	mux.HandleFunc("/", h.WebAPI)

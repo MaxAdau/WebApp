@@ -7,8 +7,8 @@ import (
 )
 
 type Handler struct {
-	p Person
-	c Car
+	p APIObj
+	c APIObj
 }
 
 func (h *Handler) WebAPI(w http.ResponseWriter, r *http.Request) {
