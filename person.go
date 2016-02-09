@@ -3,8 +3,9 @@ package main
 import (
 	"fmt"
 	"regexp"
-	"gopkg.in/mgo.v2/bson"
+	_"gopkg.in/mgo.v2/bson"
 	"net/url"
+	"encoding/json"
 
 )
 
@@ -36,14 +37,18 @@ func (p Person) Handler(url *url.URL) string {
 
 func (p Person) Search(str string) string {
 	// ParseQuery
-	_, err := url.ParseQuery(str)
+	v, err := url.ParseQuery(str)
 	if err !=  nil {
 		return fmt.Sprintf("Error while Parsing query %s\n", str)
 	}
 
-	// Check word validity --
-	//
-	//
+	fmt.Printf("v :%+T\n", v)
+	// a nil query return all objects
+
+	query := make(map[string]string)
+
+	//TODO from v to a query
+
 
 	// Create db Session and collection
 	session := db.Session.Copy()
@@ -51,11 +56,24 @@ func (p Person) Search(str string) string {
 	// Find in collection
 
 	var persons Persons
-	err = c.Find(bson.M{"name": "Santa"}).All(&persons)
+	err = c.Find(query).All(&persons)
+	// err = c.Find(bson.M{}).All(&persons)
+	// err = c.Find(bson.M{"name": "Santa"}).All(&persons)
+	if err != nil {
+		return fmt.Sprint("Error : %v\n", err)
+	}
+
+	//iterate on results 
+	// for _, item := range persons {
+	// 	fmt.Printf("item :%v\n", item)
+
+	// }
+
+	res, err := json.Marshal(persons)
 
 	fmt.Printf("Query = %+v", persons)
 	// Format answer. Can have more than one !
-	return fmt.Sprintf("Searching : %s", str)
+	return fmt.Sprintf("Searching : %s", res)
 }
 
 func (p Person) Create(str string) string {
